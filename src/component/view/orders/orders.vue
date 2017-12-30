@@ -1,10 +1,10 @@
 <template>
 	 <div class="row">
 		<div class="col l6 offset-l3 s12">
-		  <div class="card blue-grey darken-1">
+			<div class="card blue-grey darken-1">
 			<div class="card-content white-text">
-			  <span class="card-title">Your Orders</span>
-			  <ul class="collection" v-for="(item, index) in Orders" :key="index">
+				<span class="card-title">Your Orders</span>
+				<ul class="collection" v-for="(item, index) in Orders" :key="index">
 				<li class="collection-item" style="color: #00C0AF;" v-for="order in item.orderItems" :key="order.itemType">
 					<div>
 						{{order.itemName}} {{order.itemType}} x {{order.count}}
@@ -12,19 +12,20 @@
 					</div>
 				</li>
 					<li>Total &#8377; {{item.orderAmount}}</li>
-	  		</ul>
+				</ul>
 			</div>
 			<div class="card-action">
-			  <a href="#!">Go To Home</a>
+				<a href="#!">Go To Home</a>
 			</div>
-		  </div>
+			</div>
 		</div>
-	  </div>
+		</div>
 </template>
 
 <script>
 export default {
 	mounted(){
+				this.$store.dispatch('setPageUrl', '/orders');
 		this.$auth.fetch({
 			params: {},
 			success: (res)=> {

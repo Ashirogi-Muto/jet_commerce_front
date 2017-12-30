@@ -1,2 +1,1 @@
-# Dashboard
-Dashboard for DAMAC project
+# Jet commerce simple order management system

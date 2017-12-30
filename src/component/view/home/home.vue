@@ -127,6 +127,7 @@ import { makeRequest } from '../../../helpers/collection';
 
 export default {
 	mounted() {
+		this.$store.dispatch('setPageUrl', '/orders');
 		this.$auth.fetch({
 			params: {},
 			success: (response)=> {
