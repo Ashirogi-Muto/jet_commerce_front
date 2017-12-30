@@ -13,15 +13,15 @@ export default new VueRouter({
 		},
 		{
 			path: '*',
-			redirect: '/dashboard',
+			redirect: '/home',
 			meta: {
 				auth: true
 			}
 		},
 		{
-			name: 'Dashboard',
-			path: '/dashboard',
-			component: require('../component/view/dashboard/dashboard.vue'),
+			name: 'Home',
+			path: '/home',
+			component: require('../component/view/home/home.vue'),
 			meta: {
 				auth: true
 			}

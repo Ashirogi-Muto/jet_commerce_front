@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import App from './component/app.vue';
 import router from './route';
+import store from './store';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
 import Material from 'materialize-css';
 import VModal from 'vue-js-modal'
-window.$ = window.jQuery = require('jquery')
+import Snackbar from 'vue-snackbar'
+
 //specify your base and end point url to started.
 import { URL_BASE } from '../src/helpers/constant';
 const loginUrl = `${URL_BASE}/login`;
@@ -16,6 +18,9 @@ Vue.router = router
 Vue.use(VueAxios, axios)
 Vue.use(Material);
 Vue.use(VModal, { dialog: true })
+
+
+
 //define this before using vue-auth and comment this if your dashboard doesn't require any authentication
 Vue.use(VueAuth, {
 	auth: {
@@ -42,5 +47,6 @@ Vue.config.devtools = true;
 new Vue({
 	el: '#app',
 	router: router,
+	store: store,
 	render: render => render(App)
 })
