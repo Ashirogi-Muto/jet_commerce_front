@@ -1,6 +1,6 @@
 <template>
 	<div>
-			<div class="navbar-fixed">
+			<div class="navbar-fixed" v-if="!IsLoginPage">
 			<nav>
 				<div class="nav-wrapper">
 					<ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -19,6 +19,11 @@
 
 
 export default {
+	computed: {
+		IsLoginPage(){
+			return this.$store.getters.pageUrl ==  '/login'? true : false;
+		}
+	},
 	methods: {
 		goToOrders(){
 			this.$router.push({

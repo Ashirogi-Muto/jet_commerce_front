@@ -36,6 +36,9 @@
 import makeRequest from '../../../helpers/collection';
 export default {
 	name: 'LoginComponent',
+	mounted () {
+		this.$store.dispatch('setPageUrl', '/login');
+	},
 	data: () => {
 		return {
 				payload: {

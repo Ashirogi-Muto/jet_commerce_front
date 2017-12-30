@@ -1,5 +1,6 @@
 const state = {
 	items: [],
+	page: ''
 }
 const mutations = {
 	SET_CART_ITEMS: (state, payload) => {
@@ -32,6 +33,9 @@ const mutations = {
 				}
 			}
 		})
+	},
+	SET_PAGE_URL : (state, payload) =>{
+		state.page = payload
 	}
 }
 
@@ -44,11 +48,15 @@ const actions = {
 	},
 	unSetCartItem({ commit }, payload){
 		commit('UNSET_CART_ITEM', payload);
+	},
+	setPageUrl({ commit }, payload){
+		commit('SET_PAGE_URL', payload);
 	}
 }
 
 const getters = {
 	cartItems: state => state.items,
+	pageUrl: state => state.page
 }
 
 export default {

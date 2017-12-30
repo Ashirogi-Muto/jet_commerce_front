@@ -10,11 +10,6 @@ export const makeRequest = (endpoint, method = null, data = null) => {
 			'Content-Type': 'application/json'
 		}
 	};
-
-	// if (token) {
-	// 	options.headers['Authorization'] = `Bearer ${token}`
-	// }
-
 	if(method == 'GET' && data){
 		options['params'] = data
 	}
