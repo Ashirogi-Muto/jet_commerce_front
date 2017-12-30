@@ -36,17 +36,11 @@
 import makeRequest from '../../../helpers/collection';
 export default {
 	name: 'LoginComponent',
-	mounted() {
-		console.log('dadas');
-		// if (this.$auth.redirect()) {
-		// 	this.redirect = this.$auth.redirect().from.name
-		// }
-	},
 	data: () => {
 		return {
 				payload: {
-					email: 'kshitijpandey32@gmail.com',
-					password: '1q2w3e4r5t',
+					email: '',
+					password: '',
 				},
 				error: false,
 				errorMesage: '',
@@ -59,7 +53,6 @@ export default {
 			this.errorMesage = '';
 		},
 		userLogin(){
-			console.log('payload',this.payload);
 			const { email, password, redirect } = this.payload;
 			const _redirect = (redirect != null && redirect != '') ? redirect : '/home';
 			if (email && password && password.length > 6) {
@@ -70,13 +63,9 @@ export default {
 					},
 					success(res) {
 						if (!res.data.status) {
-							console.log('failed', res.data);
 							this.error = true;
 							this.errorMesage = res.data.message;
 							return
-						}
-						if(res.data.status){
-							console.log('yesssy', res.data);
 						}
 					},
 					error(err) {
@@ -86,7 +75,8 @@ export default {
 				});
 			}
 			else {
-				console.log('validation failed', this.payload);
+					this.error = true;
+					this.errorMesage = 'Please enter valid login credentials';
 			}
 		}
 	}

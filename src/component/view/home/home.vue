@@ -1,15 +1,5 @@
 <template>
 	<div>
-		<div class="navbar-fixed">
-			<nav>
-				<div class="nav-wrapper">
-					<ul id="nav-mobile" class="right hide-on-med-and-down">
-						<!-- <li><a href="sass.html">Cart</a></li> -->
-						<!-- <li><a href="badges.html">Orders</a></li> -->
-					</ul>
-				</div>
-			</nav>
-		</div>
 		<div class="container">
 			<div class="row">
 				<div class="col l8 s12">
@@ -22,15 +12,6 @@
 											<h4>Products</h4>
 										</li>
 									</div>
-									<div class="col s6 offset-s2">
-										<form>
-											<div class="input-field">
-												<input @keyup="searchItems" placeholder="Search" v-model="search" id="search" type="search" required>
-												<i @click="clearSearch" class="material-icons">close</i>
-											</div>
-										</form>
-									</div>
-
 								</div>
 								<li class="collection-item">
 									<div @click="getProductInfo(item)" class="row" v-for="(item, index) in Products" :key="index">
@@ -56,7 +37,7 @@
 					<div class="col l4 s12">
 						<div class="card white">
 							<div class="card-content">
-								<span class="card-title">Your Orders</span>
+								<span class="card-title col s6">Your Cart</span>
 								<p v-if="CartItems.length == 0">No items in your cart</p>
 								<div class="cart-items" v-if="CartItems.length != 0">
 									<table class="table table_summary">
@@ -88,19 +69,22 @@
 											</tr>
 										</tbody>
 									</table>
-									<button class="waves-effect waves-light btn">Charge</button>
+									<button @click="sendCartData" class="waves-effect waves-light btn">Charge</button>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+				</div>	
 			</div>
+			<!--add to cart modal starts-->
 			<div class="row">
 				<div class="col-s12">
-					<modal name="hello-world" height="auto" @before-close="clearCartBool">
+					<modal name="cart-prompt" height="auto" @before-close="clearCartBool">
 						<div class="row">
+							
 							<div class="col l12 s8">
-								<ul class="collection" style="border:none;" v-for="(item, index) in CurrentItem" :key="index">
+								<ul v-if="item.attributes.stock != 0" class="collection" style="border:none;" v-for="(item, index) in CurrentItem" :key="index">
+									
 									<li class="collection-item" v-for="sizes in item.attributes.size" :key="sizes.stock">
 										<div>
 											{{sizes.type}}
@@ -109,28 +93,46 @@
 										</div>
 									</li>
 								</ul>
+								<p v-else class="col s8 offset-s4" style="margin-top:30px;">Item Out Of Stock</p>
 							</div>
 						</div>
 						<p class="col offset-s4" v-if="addedToCart">Item Added To Cart</p>
 					</modal>
 				</div>
 			</div>
+			<!--add to cart modal ends-->
+
+			<!--order creation modal starts-->
+			<div class="row">
+				<div class="col-s12">
+					<modal name="order-res" height="auto">
+						<div class="row">
+							
+							<div class="col l12 s8">
+								<p class="col s8 offset-s4" style="margin-top:30px;">{{this.orderResponse}}</p>
+							</div>
+						</div>
+					</modal>
+				</div>
+			</div>
+			<!--order creation modal ends-->
+			
 		</div>
 	</div>
 </template>
 
 
 <script>
+import { makeRequest } from '../../../helpers/collection';
 
 export default {
 	mounted() {
 		this.$auth.fetch({
 			params: {},
-			success: (res)=> {
-				this.products = res.data.products;
+			success: (response)=> {
+				this.products = response.data.products;
 			},
 			error: (err)=>{
-				console.log(err);
 			},
 		});
 	},
@@ -138,14 +140,14 @@ export default {
 		return {
 			addedToCart: false,
 			cart: [],
+			orderResponse: '',
+			charge: false,
 			currentItem: [],
 			products: [],
-			search: ''
 		}
 	},
 	computed: {
 		CartItems(){
-			console.log(this.$store.getters.cartItems);
 			return this.$store.getters.cartItems
 		},
 		CurrentItem(){
@@ -175,23 +177,19 @@ export default {
 			this.cart.push(payload);
 			this.addedToCart = true;
 			this.$store.dispatch('setCartItems', payload);
+			this.hide('cart-prompt');
+			
 		},
 		clearCartBool(){
 			this.addedToCart = false;
 		},
-		clearSearch(){
-			this.search = '';
-		},
 		getProductInfo(item){
 			this.currentItem = [];
 			this.currentItem.push(item);
-			this.show();
+			this.show('cart-prompt');
 		},
-		handleAction(){
-			console.log('close');
-		},
-		hide () {
-			this.$modal.hide('hello-world');
+		hide(modal) {
+			this.$modal.hide(modal);
 		},
 		incrementItem(id){
 			let payload = {
@@ -199,28 +197,49 @@ export default {
 			};
 			this.$store.dispatch('setCartItem', payload);
 		},
-		show () {
-			this.$modal.show('hello-world');
+		show(modal) {
+			this.$modal.show(modal);
 		},
 		removeItem(id){
-				let payload = {
+			let payload = {
 				id
 			};
 			this.$store.dispatch('unSetCartItem', payload);
 		},
-		searchItems(){
-			console.log(this.search);
+		sendCartData(){
+			let finalAmount = 0;
+			let orderItems = [];
+			let cart = this.$store.getters.cartItems;
+			cart.map(x => {
+				finalAmount = finalAmount + x.count * x.price;
+				let temp = {
+					itemName: x.name,
+					itemPrice: x.price,
+					itemType: x.size,
+					count: x.count
+				}
+				orderItems.push(temp);
+			});
+			
+			let payload = {
+				finalAmount,
+				orderItems
+			};
+			makeRequest('/cart', 'POST', payload)
+				.then((response) => {
+					let { res } = response;
+						this.orderResponse = res.data.message;
+						this.show('order-res');
+				})
+				.catch((err) => {
+					this.orderResponse = 'Could not create Order';
+					this.show('order-res');
+				})
 		}
 	}
 }
 </script>
 <style>
-	.nav-wrapper{
-		background: #ffff;
-	}
-	nav ul li a{
-		color: #000 !important;
-	}
 	.add-to-cart{
 		cursor: pointer;
 	}

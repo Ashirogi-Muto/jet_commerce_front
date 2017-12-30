@@ -3,7 +3,19 @@ const state = {
 }
 const mutations = {
 	SET_CART_ITEMS: (state, payload) => {
-		state.items.push(payload);
+		if(state.items.length == 0){
+			state.items.push(payload);
+		}
+		else{
+			state.items.map(x => {
+				if(x.id == payload.id){
+					x.count++;
+				}
+				else{
+					state.items.push(payload);
+				}
+			})
+		}
 	},
 	SET_CART_ITEM: (state, payload) =>{
 		state.items.map(x => {

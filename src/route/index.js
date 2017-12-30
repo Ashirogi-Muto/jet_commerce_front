@@ -26,5 +26,13 @@ export default new VueRouter({
 				auth: true
 			}
 		},
+		{
+			name: 'Orders',
+			path: '/orders',
+			component: require('../component/view/orders/orders.vue'),
+			meta: {
+				auth: true
+			}
+		},
 	]
 });

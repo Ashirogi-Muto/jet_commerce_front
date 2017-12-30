@@ -39,7 +39,7 @@ Vue.use(VueAuth, {
 	loginData: { url: loginUrl, fetchUser: true },
 	refreshData: { url: `${URL_BASE}/auth/refresh`, method: 'GET', enabled: false },
 	fetchData: { url: fetchUserUrl, method: 'GET', enabled: true },
-	logoutData: { url: `${URL_BASE}/admin/logout`, method: 'GET', redirect: '/login', makeRequest: true }
+	logoutData: { url: `${URL_BASE}/logout`, method: 'POST', redirect: '/login', makeRequest: true }
 })
 Vue.config.devtools = true;
 
