@@ -58,7 +58,7 @@ export default {
 		userLogin(){
 			const { email, password, redirect } = this.payload;
 			const _redirect = (redirect != null && redirect != '') ? redirect : '/home';
-			if (email && password && password.length > 6) {
+			if (email && password && password.length > 0) {
 				this.$auth.login({
 					data: {
 						email,
